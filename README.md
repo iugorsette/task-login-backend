@@ -41,7 +41,7 @@ git clone https://github.com/iugorsette/login-backend.git
 npm install
 ```
 - Create a .env file in the root of the project and fill it with the environment variables (refer to the .env.example file)
-- eRun the project with the following command:
+- Run the project with the following command:
 ```bash
 docker-compose up -d
 ```
