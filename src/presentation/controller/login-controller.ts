@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-invalid-void-type */
+import { User } from 'src/domain'
 import { badRequest, ok } from '../helper'
 import { Controller, HttpResponse } from '../protocols'
 import bcrypt from 'bcryptjs'
@@ -10,28 +12,11 @@ export class LoginController implements Controller {
     try {
       const { email, password } = body
 
-      // check if user exists
       const user = await this.user.findOne({ email })
-      console.log('user: ', user)
-      if (!user) {
-        return badRequest('Usuário não encontrado')
-      }
 
-      // check if password matches
-      const checkPassword = await bcrypt.compare(password, user.password)
-
-      if (!checkPassword) {
-        return badRequest('Senha incorreta')
-      }
-
-      // create token
-      const token = jwt.sign(
-        {
-          name: user.name,
-          id: user._id
-        },
-        process.env.JWT_SECRET
-      )
+      this.checkUserExists(user)
+      await this.authenticateUser(user, password)
+      const token = this.createToken(user)
 
       return ok({
         name: user.name,
@@ -40,7 +25,33 @@ export class LoginController implements Controller {
       })
     } catch (error) {
       console.log(error)
-      return badRequest(error)
+      return badRequest(error.message)
     }
+  }
+
+  private checkUserExists (user: User): void | HttpResponse {
+    if (!user) {
+      throw new Error('Usuário não encontrado')
+    }
+  }
+
+  private async authenticateUser (user: User, password: string): Promise<void | HttpResponse> {
+    console.log('user: ', user)
+    console.log('password: ', password)
+    const checkPassword = await bcrypt.compare(password, user.password)
+    if (!checkPassword) {
+      throw new Error('Senha incorreta')
+    }
+  }
+
+  private createToken (user: any): string {
+    const token = jwt.sign(
+      {
+        name: user.name,
+        id: user._id
+      },
+      process.env.JWT_SECRET
+    )
+    return token
   }
 }
