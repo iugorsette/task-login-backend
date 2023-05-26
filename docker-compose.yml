@@ -1,0 +1,15 @@
+version: "2"
+services:
+  redesim:
+    image: "node:lts-slim"
+    user: "node"
+    working_dir: /home/node/app
+    env_file:
+      - .env 
+    volumes:
+      - ./:/home/node/app
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    expose:
+      - ${APP_PORT}
+    command: "npm run build:${APP_ENV}"

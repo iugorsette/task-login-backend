@@ -1,0 +1,10 @@
+.eslintrc.js
+README.md
+package-lock.json
+package.json
+tsconfig.json
+docker-compose.yml
+teste.js
+exemplo-dados.json
+storage
+assets
