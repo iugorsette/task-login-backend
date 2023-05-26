@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-invalid-void-type */
 import { User } from 'src/domain'
 import { badRequest, ok } from '../helper'
 import { Controller, HttpResponse } from '../protocols'
