@@ -36,8 +36,6 @@ export class LoginController implements Controller {
   }
 
   private async authenticateUser (user: User, password: string): Promise<void | HttpResponse> {
-    console.log('user: ', user)
-    console.log('password: ', password)
     const checkPassword = await bcrypt.compare(password, user.password)
     if (!checkPassword) {
       throw new Error('Senha incorreta')
