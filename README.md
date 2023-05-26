@@ -1,6 +1,6 @@
 # API REST for User Registration and Authentication
 
-## 📝 <a href="docs/Introduction.md"> Description</a>
+## 📝 <a href="docs/Description.md"> Description</a>
 
 ## Technologies Used
  - NodeJS
