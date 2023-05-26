@@ -7,54 +7,65 @@ import jwt from 'jsonwebtoken'
 
 export class RegisterController implements Controller {
   constructor (protected readonly user: any) {}
+
   async handler ({ body }: HttpRequest): Promise<HttpResponse> {
-    const { name, email, password, confirmPassword }: User = body
-    // console.log('name: ', name)
-    // console.log('email: ', email)
-    // console.log('password: ', password, ' | ', confirmPassword, ' | ', password === confirmPassword)
+    try {
+      const user: Required<User> = body
+
+      this.checkEmptyFields(user)
+      this.checkIfPasswordMatches(user)
+      await this.checkUserExists(user)
+
+      user.password = this.hashPassword(user.password)
+
+      const newUser = await this.user.create(user)
+
+      const token = this.createToken(newUser)
+
+      return redirect({ message: 'Cadastro realizado com sucesso', token, user: newUser._id })
+    } catch (error) {
+      return badRequest(error.message)
+    }
+  }
+
+  private async checkUserExists ({ email }: User): Promise<void | HttpResponse> {
+    const emailExists = await this.user.findOne({ email })
+    if (emailExists) {
+      throw new Error('E-mail já cadastrado')
+    }
+  }
+
+  private checkEmptyFields ({ name, email, password, confirmPassword }: User): void | HttpResponse {
     if (
       name == null ||
           email == null ||
           password == null ||
           confirmPassword == null
     ) {
-      return badRequest('Por favor preencha todos os campos')
+      throw new Error('Por favor preencha todos os campos')
     }
+  }
 
-    // check if password matches confirmation
+  private checkIfPasswordMatches ({ password, confirmPassword }: User): void | HttpResponse {
     if (password !== confirmPassword) {
-      return badRequest('As senhas não conferem')
+      throw new Error('As senhas não conferem')
     }
+  }
 
-    // check if email is already taken
-    const emailExists = await this.user.findOne({ email })
-    if (emailExists) {
-      return badRequest('E-mail já cadastrado')
-    }
+  private hashPassword (password: string): string {
+    const salt = bcrypt.genSaltSync(12)
+    const hashedPassword = bcrypt.hashSync(password, salt)
+    return hashedPassword
+  }
 
-    // hash password
-    const salt = await bcrypt.genSalt(12)
-    const hashedPassword = await bcrypt.hash(password, salt)
-
-    // create user
-    const newUser = await this.user.create({
-      name,
-      email,
-      password: hashedPassword
-    })
-    console.log('newUser: ', newUser)
-    try {
-      const token = jwt.sign(
-        {
-          name: newUser.name,
-          id: newUser._id
-        },
-        process.env.JWT_SECRET
-      )
-
-      return redirect({ message: 'Cadastro realizado com sucesso', token, user: newUser._id })
-    } catch (error) {
-      badRequest(error)
-    }
+  private createToken (user: any): string {
+    const token = jwt.sign(
+      {
+        name: user.name,
+        id: user._id
+      },
+      process.env.JWT_SECRET
+    )
+    return token
   }
 }
