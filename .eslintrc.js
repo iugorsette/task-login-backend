@@ -9,6 +9,7 @@ module.exports = {
     '@typescript-eslint/restrict-template-expressions': 'off',
     '@typescript-eslint/dot-notation': 'off',
     '@typescript-eslint/return-await': 'off',
-    '@typescript-eslint/prefer-nullish-coalescing':'off'
+    '@typescript-eslint/prefer-nullish-coalescing':'off',
+    '@typescript-eslint/no-invalid-void-type':'off'
   }
 }
