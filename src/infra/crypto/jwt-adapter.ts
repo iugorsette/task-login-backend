@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import { User } from 'src/domain'
+import { User, env } from 'src/domain'
 import { CreateToken } from '../protocols'
 
 export class JwtAdapter implements CreateToken {
@@ -9,7 +9,7 @@ export class JwtAdapter implements CreateToken {
         name: user.name,
         id: user._id
       },
-      process.env.JWT_SECRET
+      env.JWT_SECRET
     )
     return token
   }
