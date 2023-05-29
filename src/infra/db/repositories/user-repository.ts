@@ -1,7 +1,7 @@
 import { Create, FindOne, User } from 'src/domain'
 import { MongoHelper } from '../helper-connection'
 import { ObjectId } from 'mongodb'
-export class UserRepoisitory implements Create<User>, FindOne<User> {
+export class UserRepository implements Create<User>, FindOne<User> {
   async create (data: User): Promise<any> {
     const { confirmPassword, ...user } = { ...data, _id: new ObjectId() }
     await MongoHelper.getCollection('users').insertOne(user)

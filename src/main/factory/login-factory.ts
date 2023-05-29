@@ -1,9 +1,9 @@
-import { UserRepoisitory, JwtAdapter, BcryptAdapter } from 'src/infra'
+import { UserRepository, JwtAdapter, BcryptAdapter } from 'src/infra'
 import { Controller, LoginController } from 'src/presentation'
 
 export const makeLogin = (): Controller => {
-  const userRepoisitory = new UserRepoisitory()
+  const userRepository = new UserRepository()
   const jwtAdapter = new JwtAdapter()
   const bcryptAdapter = new BcryptAdapter()
-  return new LoginController(userRepoisitory, jwtAdapter, bcryptAdapter)
+  return new LoginController(userRepository, jwtAdapter, bcryptAdapter)
 }
