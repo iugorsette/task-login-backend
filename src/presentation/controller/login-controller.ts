@@ -1,16 +1,17 @@
-import { User } from 'src/domain'
+import { FindOne, User } from 'src/domain'
 import { badRequest, ok } from '../helper'
 import { Controller, HttpResponse } from '../protocols'
 import bcrypt from 'bcryptjs'
+import { CreateToken } from 'src/domain/usecases/createToken'
 
 export class LoginController implements Controller {
-  constructor (protected readonly user: any, protected readonly jwtAdapter: any) {}
+  constructor (protected readonly findUser: FindOne<User>, protected readonly jwtAdapter: CreateToken) {}
 
   async handler ({ body }): Promise<HttpResponse> {
     try {
       const { email, password } = body
 
-      const user = await this.user.findOne({ email })
+      const user = await this.findUser.findOne({ email })
 
       this.checkUserExists(user)
       await this.authenticateUser(user, password)

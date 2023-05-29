@@ -1,7 +1,8 @@
 import jwt from 'jsonwebtoken'
+import { User } from 'src/domain'
 
 export class JwtAdapter {
-  createToken (user: any): string {
+  createToken (user: User): string {
     const token = jwt.sign(
       {
         name: user.name,
