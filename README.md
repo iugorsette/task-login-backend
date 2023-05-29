@@ -12,6 +12,7 @@
     - Ts-node-dev
     - Dotenv
     - Docker
+    - zod
  - Database
     - MongoDB
 
