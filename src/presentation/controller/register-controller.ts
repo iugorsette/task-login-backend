@@ -43,16 +43,16 @@ export class RegisterController implements Controller {
   }
 
   private checkEmptyFields ({
-    name,
-    email,
-    password,
-    confirmPassword
+    name = '',
+    email = '',
+    password = '',
+    confirmPassword = ''
   }: User): void | HttpResponse {
     if (
-      name == null ||
-      email == null ||
-      password == null ||
-      confirmPassword == null
+      !name.trim() ||
+      !email.trim() ||
+      !password.trim() ||
+      !confirmPassword.trim()
     ) {
       throw new Error('Por favor preencha todos os campos')
     }
