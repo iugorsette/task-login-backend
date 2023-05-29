@@ -3,10 +3,9 @@ import { User } from 'src/domain'
 import { badRequest, redirect } from '../helper'
 import { Controller, HttpRequest, HttpResponse } from '../protocols'
 import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
 
 export class RegisterController implements Controller {
-  constructor (protected readonly user: any) {}
+  constructor (protected readonly user: any, protected readonly jwtAdapter: any) {}
 
   async handler ({ body }: HttpRequest): Promise<HttpResponse> {
     try {
@@ -20,7 +19,7 @@ export class RegisterController implements Controller {
 
       const newUser = await this.user.create(user)
 
-      const token = this.createToken(newUser)
+      const token = this.jwtAdapter.createToken(newUser)
 
       return redirect({ message: 'Cadastro realizado com sucesso', token, user: newUser._id })
     } catch (error) {
@@ -56,16 +55,5 @@ export class RegisterController implements Controller {
     const salt = bcrypt.genSaltSync(12)
     const hashedPassword = bcrypt.hashSync(password, salt)
     return hashedPassword
-  }
-
-  private createToken (user: any): string {
-    const token = jwt.sign(
-      {
-        name: user.name,
-        id: user._id
-      },
-      process.env.JWT_SECRET
-    )
-    return token
   }
 }

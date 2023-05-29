@@ -2,10 +2,9 @@ import { User } from 'src/domain'
 import { badRequest, ok } from '../helper'
 import { Controller, HttpResponse } from '../protocols'
 import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
 
 export class LoginController implements Controller {
-  constructor (protected readonly user: any) {}
+  constructor (protected readonly user: any, protected readonly jwtAdapter: any) {}
 
   async handler ({ body }): Promise<HttpResponse> {
     try {
@@ -15,7 +14,7 @@ export class LoginController implements Controller {
 
       this.checkUserExists(user)
       await this.authenticateUser(user, password)
-      const token = this.createToken(user)
+      const token = this.jwtAdapter.createToken(user)
 
       return ok({
         name: user.name,
@@ -39,16 +38,5 @@ export class LoginController implements Controller {
     if (!checkPassword) {
       throw new Error('Senha incorreta')
     }
-  }
-
-  private createToken (user: any): string {
-    const token = jwt.sign(
-      {
-        name: user.name,
-        id: user._id
-      },
-      process.env.JWT_SECRET
-    )
-    return token
   }
 }
