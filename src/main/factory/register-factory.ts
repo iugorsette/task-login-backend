@@ -1,6 +1,5 @@
 
-import { UserRepoisitory } from 'src/infra'
-import { JwtAdapter } from 'src/infra/Crypto/jwt'
+import { UserRepoisitory, JwtAdapter } from 'src/infra'
 import { Controller, RegisterController } from 'src/presentation'
 
 export const makeRegister = (): Controller => {

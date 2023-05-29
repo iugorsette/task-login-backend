@@ -1,6 +1,5 @@
 
-import { UserRepoisitory } from 'src/infra'
-import { JwtAdapter } from 'src/infra/Crypto/jwt'
+import { UserRepoisitory, JwtAdapter } from 'src/infra'
 import { Controller, LoginController } from 'src/presentation'
 
 export const makeLogin = (): Controller => {
