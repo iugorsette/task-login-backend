@@ -1,14 +1,14 @@
 import { Create, FindOne, User } from 'src/domain'
+import { HashPassword, CreateToken } from 'src/infra'
 import { badRequest, redirect } from '../helper'
 import { Controller, HttpRequest, HttpResponse } from '../protocols'
-import bcrypt from 'bcryptjs'
-import { CreateToken } from 'src/domain/usecases/createToken'
 
 export class RegisterController implements Controller {
   constructor (
     protected readonly findUser: FindOne<User>,
     protected readonly createUser: Create<User>,
-    protected readonly jwtAdapter: CreateToken
+    protected readonly jwtAdapter: CreateToken,
+    protected readonly bcrypt: HashPassword
   ) {}
 
   async handler ({ body }: HttpRequest): Promise<HttpResponse> {
@@ -19,7 +19,7 @@ export class RegisterController implements Controller {
       this.checkIfPasswordMatches(user)
       await this.checkUserExists(user)
 
-      user.password = this.hashPassword(user.password)
+      user.password = this.bcrypt.hash(user.password)
 
       const newUser = await this.createUser.create(user)
 
@@ -65,11 +65,5 @@ export class RegisterController implements Controller {
     if (password !== confirmPassword) {
       throw new Error('As senhas não conferem')
     }
-  }
-
-  private hashPassword (password: string): string {
-    const salt = bcrypt.genSaltSync(12)
-    const hashedPassword = bcrypt.hashSync(password, salt)
-    return hashedPassword
   }
 }
