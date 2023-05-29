@@ -1,4 +1,4 @@
-import { Create, FindOne, User } from 'src/domain'
+import { Create, FindOne, User, UserSchema } from 'src/domain'
 import { HashPassword, CreateToken } from 'src/infra'
 import { badRequest, redirect } from '../helper'
 import { Controller, HttpRequest, HttpResponse } from '../protocols'
@@ -13,7 +13,13 @@ export class RegisterController implements Controller {
 
   async handler ({ body }: HttpRequest): Promise<HttpResponse> {
     try {
-      const user: Required<User> = body
+      const userValid: any = UserSchema.safeParse(body)
+
+      if (!userValid.success) {
+        const errorMessages = userValid.error.flatten().fieldErrors
+        return badRequest(errorMessages)
+      }
+      const user = userValid.data
 
       this.checkEmptyFields(user)
       this.checkIfPasswordMatches(user)

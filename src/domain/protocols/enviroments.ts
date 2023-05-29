@@ -11,10 +11,10 @@ const enviromentsSchema = z.object({
   JWT_SECRET: z.string()
 })
 
-const _env = enviromentsSchema.safeParse(process.env)
+const _env: any = enviromentsSchema.safeParse(process.env)
 
 if (!_env.success) {
-  console.log('-->', _env)
+  console.log('-->', _env.error.message)
   throw new Error('Invalid environment variables')
 }
 
