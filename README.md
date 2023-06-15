@@ -13,6 +13,7 @@
     - Dotenv
     - Docker
     - zod
+    - Jest (Unit Tests) with Babel
  - Database
     - MongoDB
 
