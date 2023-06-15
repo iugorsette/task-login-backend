@@ -1,6 +1,6 @@
-import { FindOne, User } from 'src/domain'
-import { ComparePassword, CreateToken } from 'src/infra'
-import { LoginController } from './login-controller'
+import { FindOne, User } from './../src/domain'
+import { ComparePassword, CreateToken } from './../src/infra'
+import { LoginController } from './../src/presentation/controller/login-controller'
 
 describe('LoginController', () => {
   const findUserMock: FindOne<User> = {

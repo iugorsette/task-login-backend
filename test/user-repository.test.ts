@@ -1,5 +1,4 @@
-import { MongoHelper } from '../helper-connection'
-import { UserRepository } from './user-repository'
+import { MongoHelper, UserRepository } from '../src/infra/db'
 
 const DB_USER = 'iugorsette'
 const DB_PASSWORD = 'mongodbpassdefault'
