@@ -21,7 +21,7 @@ export class LoginController implements Controller {
 
       return ok({
         name: user.name,
-        id: user._id,
+        userId: user._id,
         token
       })
     } catch (error) {
