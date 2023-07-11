@@ -34,7 +34,7 @@ export class RegisterController implements Controller {
       return redirect({
         message: 'Cadastro realizado com sucesso',
         token,
-        user: newUser._id
+        userId: newUser._id
       })
     } catch (error) {
       return badRequest(error.message)
