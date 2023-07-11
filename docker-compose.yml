@@ -1,6 +1,6 @@
 version: "2"
 services:
-  redesim:
+  backend:
     image: "node:lts-slim"
     user: "node"
     working_dir: /home/node/app
