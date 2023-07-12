@@ -4,3 +4,6 @@ export interface Find<T> {
 export interface FindOne<T> {
   findOne: (data: T) => Promise<T>
 }
+export interface FindAll<T> {
+  findAll: (id: string) => Promise<T[]>
+}

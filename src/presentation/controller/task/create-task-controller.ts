@@ -1,8 +1,12 @@
 import { Create, Task, TaskSchema } from 'src/domain'
 import { HashPassword } from 'src/infra'
 import { ReadToken } from 'src/infra/protocols/read-token'
-import { badRequest, ok } from 'src/presentation/helper'
-import { Controller, HttpRequest, HttpResponse } from 'src/presentation/protocols'
+import { badRequest, created, unauthorized } from 'src/presentation/helper'
+import {
+  Controller,
+  HttpRequest,
+  HttpResponse
+} from 'src/presentation/protocols'
 
 export class CreateTaskController implements Controller {
   constructor (
@@ -13,29 +17,24 @@ export class CreateTaskController implements Controller {
 
   async handler ({ header, body }: HttpRequest): Promise<HttpResponse> {
     try {
+      if (!header.token) {
+        return unauthorized({ message: 'Token não fornecido' })
+      }
       const check = this.jwtAdapter.readToken(header.token)
-      this.validateToken(check, body)
-      const taskValid: any = TaskSchema.safeParse(body)
-      const { acknowledged }: any = await this.createTask.create(taskValid)
+
+      const task = { ...body, userId: check.id }
+
+      const output: any = TaskSchema.safeParse(task)
+
+      if (output.success === false) throw new Error(output.error)
+      const { acknowledged }: any = await this.createTask.create(output.data)
       if (!acknowledged) {
         throw new Error('Erro ao criar tarefa')
       }
       const message = 'Tarefa criada com sucesso'
-      return ok({ message })
+      return created({ message })
     } catch (error) {
       return badRequest(error.message)
-    }
-  }
-
-  private validateToken (check: any, { userId }): void | HttpResponse {
-    if (!check) {
-      throw new Error('Token inválido')
-    }
-    if (!userId) {
-      throw new Error('Usuário não encontrado')
-    }
-    if (userId !== check.id) {
-      throw new Error('Ops, você não tem permissão para acessar essa página')
     }
   }
 }

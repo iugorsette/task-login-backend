@@ -1,23 +1,31 @@
-import { Create, Find, Task, User } from 'src/domain'
+import { Create, Delete, FindAll, Task, Update } from 'src/domain'
 import { MongoHelper } from '../helper-connection'
-
-export class TaskRepository implements Create<Task>, Find<Task> {
+import { ObjectId } from 'mongodb'
+export class TaskRepository
+implements Create<Task>, FindAll<Task>, Update<Task>, Delete {
   async create (task: Partial<Task>): Promise<any> {
-    console.log('task:', task)
+    task.created_at = new Date()
     return await MongoHelper.getCollection('task').insertOne(task)
   }
 
-  async find (user: User): Promise<any> {
-    return await MongoHelper.getCollection('users').aggregate([
-      {
-        $lookup: {
-          from: 'task',
-          localField: '_id',
-          foreignField: 'userId',
-          as: 'tasks'
-        }
-      },
-      { $match: { _id: user._id } }
-    ])
+  async findAll (id: string): Promise<any> {
+    return await MongoHelper.getCollection('task')
+      .find({ userId: id })
+      .toArray()
+  }
+
+  async update (task: Partial<Task>): Promise<any> {
+    const id = new ObjectId(task._id)
+    delete task._id
+    task.updated_at = new Date()
+    return await MongoHelper.getCollection('task').findOneAndUpdate(
+      { _id: id },
+      { $set: task }
+    )
+  }
+
+  async delete (id: any): Promise<any> {
+    const _id = new ObjectId(id)
+    return await MongoHelper.getCollection('task').deleteOne({ _id })
   }
 }
