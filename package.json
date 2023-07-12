@@ -7,8 +7,7 @@
     "test": "jest",
     "prepare": "husky install",
     "build:dev": "ts-node-dev --transpile-only --respawn --ignore-watch node-modules -r tsconfig-paths/register src/main/config/server.ts",
-    "build:production": "rm -rf node_modules && npm install --production --ignore-scripts && npx tsc && node dist/main/config/server.js",
-    "start": "http localhost:5000/api/reportar-abertura-de-empresa-na-receita-federal"
+    "build:production": "rm -rf node_modules && npm install --production --ignore-scripts && npx tsc && node dist/main/config/server.js"
   },
   "keywords": [],
   "author": "",
