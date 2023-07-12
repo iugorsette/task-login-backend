@@ -25,7 +25,6 @@ export class LoginController implements Controller {
         token
       })
     } catch (error) {
-      console.log(error)
       return badRequest(error.message)
     }
   }
