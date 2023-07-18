@@ -1,5 +1,5 @@
 import { FindOne, User } from 'src/domain'
-import { badRequest, ok } from '../helper'
+import { badRequest, forbidden, notFound, ok } from '../helper'
 import { Controller, HttpResponse } from '../protocols'
 import { ComparePassword, CreateToken } from 'src/infra'
 
@@ -15,8 +15,14 @@ export class LoginController implements Controller {
       const { email, password } = body
 
       const user = await this.findUser.findOne({ email })
-      this.checkUserExists(user)
+      if (!user) {
+        return forbidden({ message: 'Email ou senha inválidos' })
+      }
       await this.authenticateUser(user.password, password)
+      const checkPassword = await this.bcrypt.compare(password, user.password)
+      if (!checkPassword) {
+        return forbidden({ message: 'Email ou senha inválidos' })
+      }
       const token = this.jwtAdapter.createToken(user)
 
       return ok({
@@ -29,19 +35,13 @@ export class LoginController implements Controller {
     }
   }
 
-  private checkUserExists (user: User): void | HttpResponse {
-    if (!user) {
-      throw new Error('Usuário não encontrado')
-    }
-  }
-
   private async authenticateUser (
     enteredPassword: string,
     password: string
   ): Promise<void | HttpResponse> {
     const checkPassword = await this.bcrypt.compare(password, enteredPassword)
     if (!checkPassword) {
-      throw new Error('Senha incorreta')
+      return forbidden({ message: 'Erro ao fazer login' })
     }
   }
 }

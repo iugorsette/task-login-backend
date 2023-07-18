@@ -31,7 +31,7 @@ export const redirect = (response: any): HttpResponse => {
 export const badRequest = (message: string): HttpResponse => {
   return {
     status: 400,
-    data: message
+    data: { message }
   }
 }
 
@@ -42,6 +42,12 @@ export const unauthorized = (response: any): HttpResponse => {
   }
 }
 
+export const forbidden = (response: any): HttpResponse => {
+  return {
+    status: 403,
+    data: response
+  }
+}
 export const notFound = (response: any): HttpResponse => {
   return {
     status: 404,
@@ -52,6 +58,13 @@ export const notFound = (response: any): HttpResponse => {
 export const notAcceptable = (response: any): HttpResponse => {
   return {
     status: 406,
+    data: response
+  }
+}
+
+export const conflict = (response: any): HttpResponse => {
+  return {
+    status: 409,
     data: response
   }
 }
